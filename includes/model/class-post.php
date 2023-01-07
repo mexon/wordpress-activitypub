@@ -77,7 +77,6 @@ class Post {
 
 	public function generate_attachments() {
 		$max_images = intval( \apply_filters( 'activitypub_max_images', \get_option( 'activitypub_number_images', ACTIVITYPUB_NUMBER_IMAGES ) ) );
-		\error_log( "@@@ generate_attachments " . $max_images . ' type ' . \gettype($max_images) );
 
 		$images = array();
 
@@ -90,11 +89,9 @@ class Post {
 
 		$image_ids = array();
 		// list post thumbnail first if this post has one
-		\error_log( "@@@ about to get thumbnails for post " . $id );
 		if ( \function_exists( 'has_post_thumbnail' ) && \has_post_thumbnail( $id ) ) {
 			$image_ids[] = \get_post_thumbnail_id( $id );
 			$max_images--;
-			\error_log( "@@@ max images " . $max_images . ' thing ' . print_r(\get_post_thumbnail_id( $id ), true) . ' ids ' . print_r($image_ids, true) );
 		}
 		// then list any image attachments
                 if ( $max_images > 0 ) {
@@ -117,14 +114,12 @@ class Post {
                 }
 
 		$image_ids = \array_unique( $image_ids );
-		\error_log( "@@@ got image ids " . print_r($image_ids, true) );
 
 		// get URLs for each image
 		foreach ( $image_ids as $id ) {
 			$alt = \get_post_meta( $id, '_wp_attachment_image_alt', true );
 			$thumbnail = \wp_get_attachment_image_src( $id, 'full' );
 			$mimetype = \get_post_mime_type( $id );
-			\error_log( "@@@ image id " . $id . " thumbnail " . $thumbnail . ' mime ' . $mimetype );
 
 			if ( $thumbnail ) {
 				$image = array(
