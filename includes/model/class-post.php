@@ -90,29 +90,31 @@ class Post {
 
 		$image_ids = array();
 		// list post thumbnail first if this post has one
-		\error_log( "@@@ one" );
+		\error_log( "@@@ about to get thumbnails for post " . $id );
 		if ( \function_exists( 'has_post_thumbnail' ) && \has_post_thumbnail( $id ) ) {
 			$image_ids[] = \get_post_thumbnail_id( $id );
 			$max_images--;
-			\error_log( "@@@ max images " . $max_images . ' thing ' . \get_post_thumbnail_id( $id ) . ' ids ' . print_r($image_ids, true) );
+			\error_log( "@@@ max images " . $max_images . ' thing ' . print_r(\get_post_thumbnail_id( $id ), true) . ' ids ' . print_r($image_ids, true) );
 		}
 		// then list any image attachments
-		$query = new \WP_Query(
-			array(
-				'post_parent' => $id,
-				'post_status' => 'inherit',
-				'post_type' => 'attachment',
-				'post_mime_type' => 'image',
-				'order' => 'ASC',
-				'orderby' => 'menu_order ID',
-				'posts_per_page' => $max_images,
-			)
-		);
-		foreach ( $query->get_posts() as $attachment ) {
-			if ( ! \in_array( $attachment->ID, $image_ids, true ) ) {
-				$image_ids[] = $attachment->ID;
+                if ( $max_images > 0 ) {
+			$query = new \WP_Query(
+				array(
+					'post_parent' => $id,
+					'post_status' => 'inherit',
+					'post_type' => 'attachment',
+					'post_mime_type' => 'image',
+					'order' => 'ASC',
+					'orderby' => 'menu_order ID',
+					'posts_per_page' => $max_images,
+				)
+			);
+			foreach ( $query->get_posts() as $attachment ) {
+				if ( ! \in_array( $attachment->ID, $image_ids, true ) ) {
+					$image_ids[] = $attachment->ID;
+				}
 			}
-		}
+                }
 
 		$image_ids = \array_unique( $image_ids );
 		\error_log( "@@@ got image ids " . print_r($image_ids, true) );
