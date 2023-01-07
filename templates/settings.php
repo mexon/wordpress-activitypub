@@ -79,7 +79,7 @@
 						<?php \esc_html_e( 'Number of images', 'activitypub' ); ?>
 					</th>
 					<td>
-						<textarea name="activitypub_allowed_html" id="activitypub_allowed_html" rows="1" cols="50" class="large-text"><?php echo esc_html( \get_option( 'activitypub_num_images', ACTIVITYPUB_NUMBER_IMAGES ) ); ?></textarea>
+						<textarea name="activitypub_number_images" id="activitypub_number_images" rows="1" cols="50" class="large-text"><?php echo esc_html( \get_option( 'activitypub_number_images', ACTIVITYPUB_NUMBER_IMAGES ) ); ?></textarea>
 						<p class="description">
 							<?php
 							echo \wp_kses(
