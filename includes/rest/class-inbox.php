@@ -436,7 +436,7 @@ class Inbox {
 		// save only replies and reactions
 		$comment_post_id = \Activitypub\object_to_post_id_by_field_name( $object, 'context' ) ??
 	   			   \Activitypub\object_to_post_id_by_field_name( $object, 'inReplyTo' ) ??
-				    ( $parent_comment ? parent_comment->comment_post_ID : 0 );
+				    ( $parent_comment ? $parent_comment->comment_post_ID : 0 );
 		if ( ! $comment_post_id ) {
 			\error_log( "@@@ no comment post id" );
 			return;
