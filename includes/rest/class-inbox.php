@@ -429,7 +429,7 @@ class Inbox {
 		}
 		
 		$parent_comment = \Activitypub\object_id_to_comment( $in_reply_to );
-		if ( ! $parent_comment ) {
+		if ( $parent_comment ) {
 			\error_log( "@@@ Found parent comment id " . $parent_comment->comment_ID . " post " . $parent_comment->comment_post_ID );
 		}
 		
