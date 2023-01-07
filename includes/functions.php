@@ -336,12 +336,12 @@ function object_id_to_comment( $id ) {
  *
  * @param string $field_name The name of the URL field in the object to query.
  *
- * @return int Post ID, or 0 on failure.
+ * @return int Post ID, or null on failure.
  */
 function object_to_post_id_by_field_name( $object, $field_name ) {
 	if ( ! isset( $object['object'][$field_name] ) ) {
 		\error_log( "@@@ object does not have field " . $field_name );
-		return 0;
+		return;
 	}
 	$result = \url_to_postid( $object['object'][$field_name] );
 	\error_log( "@@@ found result for " . $field_name . ": " . $result );
