@@ -405,6 +405,7 @@ class Inbox {
 	 * @return array Comment data suitable for creating a comment.
 	 */
 	private static function convert_object_to_comment_data( $object ) {
+		\error_log( "@@@ convert_object_to_comment_data " . print_r($object, true) );
 		$meta = \Activitypub\get_remote_metadata_by_actor( $object['actor'] );
 
 		// Objects must have IDs
@@ -416,22 +417,28 @@ class Inbox {
 
 		// Only handle replies
 		if ( ! isset( $object['object']['inReplyTo'] ) ) {
+			\error_log( "@@@ Comment provided without inReplyTo" );
 			return;
 		}
 		$in_reply_to = $object['object']['inReplyTo'];
 
 		// Comment already exists
 		if ( \Activitypub\object_id_to_comment( $id ) ) {
+			\error_log( "@@@ Found comment for id " . $id );
 			return;
 		}
 		
 		$parent_comment = \Activitypub\object_id_to_comment( $in_reply_to );
+		if ( $parent_comment ) {
+			\error_log( "@@@ Found parent comment id " . $parent_comment->comment_ID . " post " . $parent_comment->comment_post_ID );
+		}
 		
 		// save only replies and reactions
 		$comment_post_id = \Activitypub\object_to_post_id_by_field_name( $object, 'context' ) ??
 	   			   \Activitypub\object_to_post_id_by_field_name( $object, 'inReplyTo' ) ??
 				    ( $parent_comment ? $parent_comment->comment_post_ID : 0 );
 		if ( ! $comment_post_id ) {
+			\error_log( "@@@ no comment post id" );
 			return;
 		}
 
@@ -463,6 +470,7 @@ class Inbox {
 		if ( !$commentdata ) {
 			return false;
 		}
+		\error_log( "@@@ got comment data " . print_r($commentdata, true) );
 
 		// disable flood control
 		\remove_action( 'check_comment_flood', 'check_comment_flood_db', 10 );
