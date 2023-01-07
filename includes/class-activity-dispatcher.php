@@ -29,7 +29,6 @@ class Activity_Dispatcher {
 
 		$activitypub_activity = new \Activitypub\Model\Activity( 'Create', \Activitypub\Model\Activity::TYPE_FULL );
 		$activitypub_activity->from_post( $activitypub_post->to_array() );
-		\error_log( "@@@ Send post activity " . print_r($activitypub_activity, true));
 
 		foreach ( \Activitypub\get_follower_inboxes( $user_id ) as $inbox => $to ) {
 			$activitypub_activity->set_to( $to );
@@ -51,7 +50,6 @@ class Activity_Dispatcher {
 
 		$activitypub_activity = new \Activitypub\Model\Activity( 'Update', \Activitypub\Model\Activity::TYPE_FULL );
 		$activitypub_activity->from_post( $activitypub_post->to_array() );
-		\error_log( "@@@ Send update activity " . print_r($activitypub_activity, true));
 
 		foreach ( \Activitypub\get_follower_inboxes( $user_id ) as $inbox => $to ) {
 			$activitypub_activity->set_to( $to );
@@ -72,7 +70,6 @@ class Activity_Dispatcher {
 
 		$activitypub_activity = new \Activitypub\Model\Activity( 'Delete', \Activitypub\Model\Activity::TYPE_FULL );
 		$activitypub_activity->from_post( $activitypub_post->to_array() );
-		\error_log( "@@@ Send delete activity " . print_r($activitypub_activity, true));
 
 		foreach ( \Activitypub\get_follower_inboxes( $user_id ) as $inbox => $to ) {
 			$activitypub_activity->set_to( $to );
