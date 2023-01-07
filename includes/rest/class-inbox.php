@@ -466,7 +466,7 @@ class Inbox {
 	 * @param  int   $user_id The id of the local blog-user
 	 */
 	public static function handle_create( $object, $user_id ) {
-		$commentdata = convert_object_to_comment_data( $object );
+		$commentdata = self::convert_object_to_comment_data( $object );
 		if ( !$commentdata ) {
 			return false;
 		}
