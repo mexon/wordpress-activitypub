@@ -428,8 +428,8 @@ class Inbox {
 		$parent_comment = \Activitypub\object_id_to_comment( $in_reply_to );
 		
 		// save only replies and reactions
-		$comment_post_id => \Activitypub\object_to_post_id_by_field_name( $object, 'context' ) ||
-	   			    \Activitypub\object_to_post_id_by_field_name( $object, 'inReplyTo' ) ||
+		$comment_post_id = \Activitypub\object_to_post_id_by_field_name( $object, 'context' ) ??
+	   			   \Activitypub\object_to_post_id_by_field_name( $object, 'inReplyTo' ) ??
 				    ( $parent_comment ? parent_comment->comment_post_ID : 0 );
 		if ( ! $comment_post_id ) {
 			return;
