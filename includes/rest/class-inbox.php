@@ -423,7 +423,7 @@ class Inbox {
 		$in_reply_to = $object['object']['inReplyTo'];
 
 		// Comment already exists
-		if ( \Activitypub\comment_id_to_comment( $id ) ) {
+		if ( \Activitypub\object_id_to_comment( $id ) ) {
 			\error_log( "@@@ Found comment for id " . $id );
 			return;
 		}
