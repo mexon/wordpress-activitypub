@@ -340,7 +340,10 @@ function object_id_to_comment( $id ) {
  */
 function object_to_post_id_by_field_name( $object, $field_name ) {
 	if ( ! isset( $object['object'][$field_name] ) ) {
+		\error_log( "@@@ object does not have field " . $field_name );
 		return 0;
 	}
-	return \url_to_postid( $object['object'][$field_name] );
+	$result = \url_to_postid( $object['object'][$field_name] );
+	\error_log( "@@@ found result for " . $field_name . ": " . $result );
+	return $result;
 }
