@@ -16,6 +16,9 @@ class Activity_Dispatcher {
 		\add_action( 'activitypub_send_post_activity', array( '\Activitypub\Activity_Dispatcher', 'send_post_activity' ) );
 		\add_action( 'activitypub_send_update_activity', array( '\Activitypub\Activity_Dispatcher', 'send_update_activity' ) );
 		\add_action( 'activitypub_send_delete_activity', array( '\Activitypub\Activity_Dispatcher', 'send_delete_activity' ) );
+		\add_action( 'activitypub_send_comment_activity', array( '\Activitypub\Activity_Dispatcher', 'send_comment_activity' ) );
+		\add_action( 'activitypub_send_update_comment_activity', array( '\Activitypub\Activity_Dispatcher', 'send_update_comment_activity' ) );
+		\add_action( 'activitypub_send_delete_comment_activity', array( '\Activitypub\Activity_Dispatcher', 'send_delete_comment_activity' ) );
 	}
 
 	/**
@@ -77,5 +80,32 @@ class Activity_Dispatcher {
 
 			\Activitypub\safe_remote_post( $inbox, $activity, $user_id );
 		}
+	}
+
+	/**
+	 * Send "create comment" activities.
+	 *
+	 * @param \Activitypub\Model\Comment $activitypub_comment
+	 */
+	public static function send_comment_activity( $activitypub_comment ) {
+		\error_log( "@@@ send_comment_activity " . print_r($activitypub_comment, true) );
+	}
+
+	/**
+	 * Send "update comment" activities.
+	 *
+	 * @param \Activitypub\Model\Comment $activitypub_comment
+	 */
+	public static function send_update_comment_activity( $activitypub_comment ) {
+		\error_log( "@@@ send_update_comment_activity " . print_r($activitypub_comment, true) );
+	}
+
+	/**
+	 * Send "delete comment" activities.
+	 *
+	 * @param \Activitypub\Model\Post $activitypub_comment
+	 */
+	public static function send_delete_comment_activity( $activitypub_comment ) {
+		\error_log( "@@@ send_delete_comment_activity " . print_r($activitypub_comment, true) );
 	}
 }

@@ -23,7 +23,10 @@ class Activitypub {
 			\add_post_type_support( $post_type, 'activitypub' );
 		}
 
+		\error_log( "@@@ init running" );
 		\add_action( 'transition_post_status', array( '\Activitypub\Activitypub', 'schedule_post_activity' ), 10, 3 );
+		\add_action( 'comment_post', array( '\Activitypub\Activitypub', 'schedule_comment_post_activity' ), 10, 3 );
+		\add_action( 'transition_comment_status', array( '\Activitypub\Activitypub', 'schedule_comment_activity' ), 10, 3 );
 	}
 
 	/**
@@ -123,6 +126,67 @@ class Activitypub {
 			\wp_schedule_single_event( \time(), 'activitypub_send_update_activity', array( $activitypub_post ) );
 		} elseif ( 'trash' === $new_status ) {
 			\wp_schedule_single_event( \time(), 'activitypub_send_delete_activity', array( $activitypub_post ) );
+		}
+	}
+
+	/**
+	 * Schedule Comment Post Activities.
+	 *
+	 * @param int  $comment_ID ID of the comment that was created
+	 * @param int  $comment_approved 1 if it is approved, 0 if not, "spam" if it is spam
+	 * @param array $commentdata Array containing comment data
+	 */
+	public static function schedule_comment_post_activity( $comment_ID, $comment_approved, $commentdata ) {
+		\error_log( "@@@ schedule_comment_post_activity " . $comment_ID );
+	        if ( $comment_approved != 1 ) {
+			\error_log( "@@@ comment not approved" );
+        		return;
+        	}
+                $comment = \get_comment($comment_ID);
+                if ( ! $comment ) {
+			\error_log( "@@@ could not find comment" );
+        		return;
+                }
+                self::schedule_comment_activity( "approved", "approved", $comment );
+	}
+
+	/**
+	 * Schedule Comment Activities.
+	 *
+	 * @param string  $new_status New comment status.
+	 * @param string  $old_status Old comment status.
+	 * @param WP_Comment $comment       Comment object.
+	 */
+	public static function schedule_comment_activity( $new_status, $old_status, $comment ) {
+		\error_log( "@@@ schedule_comment_activity " . $old_status . " -> " . $new_status . ": " . print_r($comment, true) );
+		$post = \get_post($comment->comment_post_ID);
+		if ( ! $post ) {
+			\error_log( "@@@ no post" );
+			return;
+		}
+
+		// Do not send activities if post is password protected.
+		if ( \post_password_required( $post ) ) {
+			\error_log( "@@@ password" );
+			return;
+		}
+
+		// Check if post-type supports ActivityPub.
+		$post_types = \get_post_types_by_support( 'activitypub' );
+		if ( ! \in_array( $post->post_type, $post_types, true ) ) {
+			\error_log( "@@@ type not supported " . $post->post_type );
+			return;
+		}
+
+		$activitypub_comment = new \Activitypub\Model\Comment( $comment );
+
+		if ( 'publish' === $new_status && 'publish' !== $old_status ) {
+			\error_log( "@@@ scheduling activitypub_send_comment_activity" );
+			\wp_schedule_single_event( \time(), 'activitypub_send_comment_activity', array( $activitypub_comment ) );
+		} elseif ( 'publish' === $new_status ) {
+			\wp_schedule_single_event( \time(), 'activitypub_send_update_comment_activity', array( $activitypub_comment ) );
+		} elseif ( 'trash' === $new_status ) {
+			\wp_schedule_single_event( \time(), 'activitypub_send_delete_comment_activity', array( $activitypub_comment ) );
 		}
 	}
 
