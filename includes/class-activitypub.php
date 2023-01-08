@@ -180,10 +180,10 @@ class Activitypub {
 
 		$activitypub_comment = new \Activitypub\Model\Comment( $comment );
 
-		if ( 'publish' === $new_status && 'publish' !== $old_status ) {
+		if ( 'approved' === $new_status && 'approved' !== $old_status ) {
 			\error_log( "@@@ scheduling activitypub_send_comment_activity" );
 			\wp_schedule_single_event( \time(), 'activitypub_send_comment_activity', array( $activitypub_comment ) );
-		} elseif ( 'publish' === $new_status ) {
+		} elseif ( 'approved' === $new_status ) {
 			\wp_schedule_single_event( \time(), 'activitypub_send_update_comment_activity', array( $activitypub_comment ) );
 		} elseif ( 'trash' === $new_status ) {
 			\wp_schedule_single_event( \time(), 'activitypub_send_delete_comment_activity', array( $activitypub_comment ) );
