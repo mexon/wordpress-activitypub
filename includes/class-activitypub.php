@@ -23,7 +23,6 @@ class Activitypub {
 			\add_post_type_support( $post_type, 'activitypub' );
 		}
 
-		\error_log( "@@@ init running" );
 		\add_action( 'transition_post_status', array( '\Activitypub\Activitypub', 'schedule_post_activity' ), 10, 3 );
 		\add_action( 'comment_post', array( '\Activitypub\Activitypub', 'schedule_comment_post_activity' ), 10, 3 );
 		\add_action( 'transition_comment_status', array( '\Activitypub\Activitypub', 'schedule_comment_activity' ), 10, 3 );

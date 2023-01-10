@@ -69,7 +69,7 @@ class Comment {
 
 		$content = \trim( \preg_replace( '/[\r\n]{2,}/', '', $content ) );
 
-		$filtered_content = \apply_filters( 'activitypub_the_content', $content, $this->post );
+		$filtered_content = \apply_filters( 'activitypub_comment_content', $content, $this->comment );
 		$decoded_content = \html_entity_decode( $filtered_content, \ENT_QUOTES, 'UTF-8' );
 
 		$allowed_html = \apply_filters( 'activitypub_allowed_html', \get_option( 'activitypub_allowed_html', ACTIVITYPUB_ALLOWED_HTML ) );
