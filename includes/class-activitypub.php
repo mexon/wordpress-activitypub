@@ -146,7 +146,7 @@ class Activitypub {
 			\error_log( "@@@ could not find comment" );
         		return;
                 }
-                self::schedule_comment_activity( "new", "approved", $comment );
+                self::schedule_comment_activity( "approved", "new", $comment );
 	}
 
 	/**
