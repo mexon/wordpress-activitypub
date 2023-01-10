@@ -14,6 +14,9 @@ class Comment {
 		$this->comment = \get_comment( $comment );
 
 		$this->post_author = $this->comment->comment_author;
+		$this->id          = $this->generate_id();
+		$this->content     = $this->generate_the_content();
+		$this->object_type = $this->generate_object_type();
 	}
 
 	public function __call( $method, $params ) {
@@ -52,66 +55,40 @@ class Comment {
 		return \str_replace( '__trashed', '', $permalink );
 	}
 
-	public function generate_attachments() {
-	}
-
-	public function generate_tags() {
-	}
-
 	/**
 	 * Returns the as2 object-type for a given post
-	 *
-	 * @param string $type the object-type
-	 * @param Object $post the post-object
 	 *
 	 * @return string the object-type
 	 */
 	public function generate_object_type() {
+		return 'Note';
 	}
 
 	public function generate_the_content() {
-	}
+                $content = $this->comment->comment_content;
 
-	public function get_post_content_template() {
-	}
+		$content = \trim( \preg_replace( '/[\r\n]{2,}/', '', $content ) );
 
-	/**
-	 * Get the excerpt for a post for use outside of the loop.
-	 *
-	 * @param int     Optional excerpt length.
-	 *
-	 * @return string The excerpt.
-	 */
-	public function get_the_post_excerpt( $excerpt_length = 400 ) {
-	}
+		$filtered_content = \apply_filters( 'activitypub_the_content', $content, $this->post );
+		$decoded_content = \html_entity_decode( $filtered_content, \ENT_QUOTES, 'UTF-8' );
 
-	/**
-	 * Get the content for a post for use outside of the loop.
-	 *
-	 * @return string The content.
-	 */
-	public function get_the_post_content() {
+		$allowed_html = \apply_filters( 'activitypub_allowed_html', \get_option( 'activitypub_allowed_html', ACTIVITYPUB_ALLOWED_HTML ) );
+
+		if ( $allowed_html ) {
+			return \strip_tags( $decoded_content, $allowed_html );
+		}
+
+		return $decoded_content;
 	}
 
 	/**
-	 * Adds a backlink to the post/summary content
+	 * Get IDs of all authors in the thread back to the original post.  Includes only authors that are registered.
 	 *
-	 * @param string  $content
-	 * @param WP_Post $post
-	 *
-	 * @return string
+	 * @return array Array of integer IDs
 	 */
-	public function get_the_post_link( $type = 'permalink' ) {
-	}
-
-	/**
-	 * Adds all tags as hashtags to the post/summary content
-	 *
-	 * @param string  $content
-	 * @param WP_Post $post
-	 *
-	 * @return string
-	 */
-	public function get_the_post_hashtags() {
+	public function get_thread_author_ids() {
+		\error_log( "@@@ get_thread_author_ids" );
+                $author_ids = [ $this->post_author ];
+                return $author_ids;
 	}
 }

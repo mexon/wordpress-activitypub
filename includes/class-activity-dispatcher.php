@@ -89,6 +89,22 @@ class Activity_Dispatcher {
 	 */
 	public static function send_comment_activity( $activitypub_comment ) {
 		\error_log( "@@@ send_comment_activity " . print_r($activitypub_comment, true) );
+
+		$activitypub_activity = new \Activitypub\Model\Activity( 'Create', \Activitypub\Model\Activity::TYPE_FULL );
+		$activitypub_activity->from_post( $activitypub_post->to_array() );
+
+		foreach ( $activitypub_comment->get_thread_authors_ids() as $user_id ) {
+			foreach ( \Activitypub\get_follower_inboxes( $user_id ) as $inbox => $to ) {
+				// TODO: exclude author who originally posted comment
+
+				$activitypub_activity->set_to( $to );
+
+				$activity = $activitypub_activity->to_json(); // phpcs:ignore
+
+				\error_log( "@@@ send_comment_activity would send " . print_r($activity, true) );
+				// \Activitypub\safe_remote_post( $inbox, $activity, $user_id );
+			}
+		}
 	}
 
 	/**
