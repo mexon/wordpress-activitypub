@@ -91,7 +91,7 @@ class Activity_Dispatcher {
 		\error_log( "@@@ send_comment_activity " . print_r($activitypub_comment, true) );
 
 		$activitypub_activity = new \Activitypub\Model\Activity( 'Create', \Activitypub\Model\Activity::TYPE_FULL );
-		$activitypub_activity->from_post( $activitypub_post->to_array() );
+		$activitypub_activity->from_post( $activitypub_comment->to_array() );
 
 		foreach ( $activitypub_comment->get_thread_authors_ids() as $user_id ) {
 			foreach ( \Activitypub\get_follower_inboxes( $user_id ) as $inbox => $to ) {
