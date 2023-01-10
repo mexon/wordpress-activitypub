@@ -36,8 +36,9 @@ class Comment {
 
 		$array = array(
 			'id' => $this->id,
-			'type' => $this->comment_type,
+			'type' => $this->object_type,
 			'published' => \gmdate( 'Y-m-d\TH:i:s\Z', \strtotime( $comment->comment_date_gmt ) ),
+			'content' => $this->content,
 		);
 
 		return \apply_filters( 'activitypub_comment', $array );
