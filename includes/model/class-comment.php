@@ -73,7 +73,7 @@ class Comment {
 
 	public function generate_comment_author() {
 		if ( $this->comment->user_id != 0 ) {
-			\get_author_posts_url( $this->comment->user_id );
+			\get_author_posts_url( intval( $this->comment->user_id ) );
 		}
 		return $this->comment->author_url;
 	}
