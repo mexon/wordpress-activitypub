@@ -88,7 +88,7 @@ class Comment {
 	 * @return array Array of integer IDs
 	 */
 	private function get_thread_author_ids_from_comment( $comment ) {
-		\error_log( "@@@ get_thread_author_ids" );
+		\error_log( "@@@ get_thread_author_ids, user " . $comment->user_id . ", parent " . $this->comment->comment_parent );
 		$parent_comment = \WP_Comment::get_instance( $this->comment->comment_parent );
 		if ( $parent_comment ) {
 			$author_ids = get_thread_author_ids_from_comment( $parent_comment );
@@ -108,8 +108,8 @@ class Comment {
 	 * @return array Array of integer IDs
 	 */
 	public function get_thread_author_ids() {
-		\error_log( "@@@ get_thread_author_ids" );
-                $author_ids = get_thread_author_ids_from_comment( $parent_comment );
+		\error_log( "@@@ get_thread_author_ids post id " . $this->comment->comment_post_ID );
+                $author_ids = get_thread_author_ids_from_comment( $this->comment );
 		$parent_post = \WP_Post::get_instance( $this->comment->comment_post_ID );
 		if ( $parent_post ) {
 			array_push( $author_ids, $parent_post->post_author );
