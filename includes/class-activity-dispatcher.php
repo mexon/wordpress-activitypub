@@ -102,8 +102,8 @@ class Activity_Dispatcher {
 
 				$activity = $activitypub_activity->to_json(); // phpcs:ignore
 
-				\error_log( "@@@ send_comment_activity would send " . print_r($activity, true) );
-				// \Activitypub\safe_remote_post( $inbox, $activity, $user_id );
+				\error_log( "@@@ send_comment_activity sending " . print_r($activity, true) );
+				\Activitypub\safe_remote_post( $inbox, $activity, $user_id );
 			}
 		}
 	}
