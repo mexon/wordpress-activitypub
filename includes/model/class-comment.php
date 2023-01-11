@@ -13,10 +13,10 @@ class Comment {
 	public function __construct( $comment = null ) {
 		$this->comment = \get_comment( $comment );
 
-		$this->post_author = $this->comment->comment_author;
-		$this->id          = $this->generate_id();
-		$this->content     = $this->generate_the_content();
-		$this->object_type = $this->generate_object_type();
+		$this->comment_author = $this->comment->user_id;
+		$this->id             = $this->generate_id();
+		$this->content        = $this->generate_the_content();
+		$this->object_type    = $this->generate_object_type();
 	}
 
 	public function __call( $method, $params ) {
@@ -87,9 +87,34 @@ class Comment {
 	 *
 	 * @return array Array of integer IDs
 	 */
+	private function get_thread_author_ids_from_comment( $comment ) {
+		\error_log( "@@@ get_thread_author_ids" );
+		$parent_comment = \WP_Comment::get_instance( $this->comment->comment_parent );
+		if ( $parent_comment ) {
+			$author_ids = get_thread_author_ids_from_comment( $parent_comment );
+		}
+		else {
+			$author_ids = [];
+		}
+                if ( $comment->user_id ) {
+                	array_push( $author_ids, $comment->user_id );
+                }
+                return $author_ids;
+	}
+
+	/**
+	 * Get IDs of all authors in the thread back to the original post.  Includes only authors that are registered.
+	 *
+	 * @return array Array of integer IDs
+	 */
 	public function get_thread_author_ids() {
 		\error_log( "@@@ get_thread_author_ids" );
-                $author_ids = [ $this->post_author ];
+                $author_ids = get_thread_author_ids_from_comment( $parent_comment );
+		$parent_post = \WP_Post::get_instance( $this->comment->comment_post_ID );
+		if ( $parent_post ) {
+			array_push( $author_ids, $parent_post->post_author );
+		}
+		\error_log( "@@@ get_thread_author_ids " . print_r( $author_ids, true ) );
                 return $author_ids;
 	}
 }

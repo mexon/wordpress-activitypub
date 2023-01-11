@@ -38,6 +38,7 @@ class Activity_Dispatcher {
 
 			$activity = $activitypub_activity->to_json(); // phpcs:ignore
 
+			\error_log( "@@@ send_post_activity sending " . print_r($activity, true) );
 			\Activitypub\safe_remote_post( $inbox, $activity, $user_id );
 		}
 	}
@@ -93,7 +94,7 @@ class Activity_Dispatcher {
 		$activitypub_activity = new \Activitypub\Model\Activity( 'Create', \Activitypub\Model\Activity::TYPE_FULL );
 		$activitypub_activity->from_post( $activitypub_comment->to_array() );
 
-		foreach ( $activitypub_comment->get_thread_authors_ids() as $user_id ) {
+		foreach ( $activitypub_comment->get_thread_author_ids() as $user_id ) {
 			foreach ( \Activitypub\get_follower_inboxes( $user_id ) as $inbox => $to ) {
 				// TODO: exclude author who originally posted comment
 
