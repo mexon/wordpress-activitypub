@@ -75,6 +75,34 @@ class Post {
 		return \str_replace( '__trashed', '', $permalink );
 	}
 
+	public function add_thumbnail_id( $post_id, \$image_ids, $max_images ) {
+		if ( $max_images >= 1 && \function_exists( 'has_post_thumbnail' ) && \has_post_thumbnail( $id ) ) {
+			$image_ids[] = \get_post_thumbnail_id( $id );
+		}
+	}
+
+	public function add_attachment_ids( $post_id, \$image_ids, $max_images ) {
+		if ( count($image_ids) >= $max_images ) {
+			return;
+		}
+		$query = new \WP_Query(
+			array(
+				'post_parent' => $id,
+				'post_status' => 'inherit',
+				'post_type' => 'attachment',
+				'post_mime_type' => 'image',
+				'order' => 'ASC',
+				'orderby' => 'menu_order ID',
+				'posts_per_page' => $max_images - count($image_ids),
+			)
+		);
+		foreach ( $query->get_posts() as $attachment ) {
+			if ( ! \in_array( $attachment->ID, $image_ids, true ) ) {
+				$image_ids[] = $attachment->ID;
+			}
+		}
+	}
+
 	public function generate_attachments() {
 		$max_images = intval( \apply_filters( 'activitypub_max_image_attachments', \get_option( 'activitypub_max_image_attachments', ACTIVITYPUB_MAX_IMAGE_ATTACHMENTS ) ) );
 
@@ -89,30 +117,9 @@ class Post {
 
 		$image_ids = array();
 		// list post thumbnail first if this post has one
-		if ( \function_exists( 'has_post_thumbnail' ) && \has_post_thumbnail( $id ) ) {
-			$image_ids[] = \get_post_thumbnail_id( $id );
-			$max_images--;
-		}
+		$this->add_thumbnail_id( $id, $image_ids, $max_images );
 		// then list any image attachments
-		if ( $max_images > 0 ) {
-			$query = new \WP_Query(
-				array(
-					'post_parent' => $id,
-					'post_status' => 'inherit',
-					'post_type' => 'attachment',
-					'post_mime_type' => 'image',
-					'order' => 'ASC',
-					'orderby' => 'menu_order ID',
-					'posts_per_page' => $max_images,
-				)
-			);
-			foreach ( $query->get_posts() as $attachment ) {
-				if ( ! \in_array( $attachment->ID, $image_ids, true ) ) {
-					$image_ids[] = $attachment->ID;
-				}
-			}
-		}
-
+		$this->add_thumbnail_id( $id, $image_ids, $max_images );
 		$image_ids = \array_unique( $image_ids );
 
 		// get URLs for each image
