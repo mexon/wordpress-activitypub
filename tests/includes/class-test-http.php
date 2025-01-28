@@ -45,12 +45,41 @@ class Test_Http extends \WP_UnitTestCase {
 		return array(
 			array( array( 'response' => array( 'code' => 404 ) ), true ),
 			array( array( 'response' => array( 'code' => 410 ) ), true ),
-			array( array( 'response' => array( 'code' => 200 ), 'body' => '' ), false ),
-			array( array( 'response' => array( 'code' => 200 ), 'body' => '{}' ), false ),
-			array( array( 'response' => array( 'code' => 200 ), 'body' => '{"type": "Note"}' ), false ),
-			array( array( 'response' => array( 'code' => 200 ), 'body' => '{"type": "Tombstone"}' ), true ),
-			array( array( 'response' => array( 'code' => 200 ), 'body' => '{"foo": "bar"}' ), false ),
+			array(
+				array(
+					'response' => array( 'code' => 200 ),
+					'body'     => '',
+				),
+				false,
+			),
+			array(
+				array(
+					'response' => array( 'code' => 200 ),
+					'body'     => '{}',
+				),
+				false,
+			),
+			array(
+				array(
+					'response' => array( 'code' => 200 ),
+					'body'     => '{"type": "Note"}',
+				),
+				false,
+			),
+			array(
+				array(
+					'response' => array( 'code' => 200 ),
+					'body'     => '{"type": "Tombstone"}',
+				),
+				true,
+			),
+			array(
+				array(
+					'response' => array( 'code' => 200 ),
+					'body'     => '{"foo": "bar"}',
+				),
+				false,
+			),
 		);
 	}
 }
-
