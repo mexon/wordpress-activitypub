@@ -201,7 +201,7 @@ class Http {
 
 		$data = \wp_remote_retrieve_body( $response );
 		$data = \json_decode( $data, true );
-		if ( $data && 'Tombstone' === $data['type'] ) {
+		if ( $data && isset( $data['type'] ) && 'Tombstone' === $data['type'] ) {
 			return true;
 		}
 
